@@ -6,7 +6,6 @@ use migration::MigratorTrait;
 use sea_orm::ConnectOptions;
 use sea_orm::Database;
 use shuttle_runtime::Error;
-use warp::filters::BoxedFilter;
 use warp::Filter;
 use warp::Reply;
 
@@ -33,7 +32,7 @@ async fn warp(
         .and(db_filter.clone())
         .map(|_db| "Hello from Warp with PostgreSQL DB;");
 
-    let routes = hello_db.or(api_routes::<BoxedFilter<()>>(db_filter));
+    let routes = hello_db.or(api_routes(db_filter));
 
     Ok(routes.boxed().into())
 }

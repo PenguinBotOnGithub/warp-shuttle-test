@@ -5,7 +5,7 @@ use warp::{filters::BoxedFilter, reply::Reply, Filter};
 
 use crate::user::get_users_handler;
 
-pub fn api_routes<T>(
+pub fn api_routes(
     db_filter: BoxedFilter<(Arc<DatabaseConnection>,)>,
 ) -> BoxedFilter<(impl Reply,)> {
     let iwak_route = warp::any()
