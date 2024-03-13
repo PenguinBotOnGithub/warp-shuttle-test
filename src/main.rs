@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
 use anyhow::Error as anyError;
+use api::routes::api_routes;
 use migration::MigratorTrait;
-use parking_lot::lock_api::RwLock;
-use parking_lot::RawRwLock;
 use sea_orm::ConnectOptions;
 use sea_orm::Database;
-use sea_orm::DatabaseConnection;
 use shuttle_runtime::Error;
+use warp::filters::BoxedFilter;
 use warp::Filter;
 use warp::Reply;
 
@@ -26,11 +25,15 @@ async fn warp(
         .await
         .map_err(|e| Error::Custom(anyError::msg(format!("Error running migrations: {e}"))))?;
 
-    let db_clone = Arc::new(RwLock::<RawRwLock, DatabaseConnection>::new(db));
-    let db_filter = warp::any().map(move || Arc::clone(&db_clone));
+    let db_clone = Arc::new(db);
+    let db_filter = warp::any().map(move || Arc::clone(&db_clone)).boxed();
 
-    let route = warp::any()
-        .and(db_filter)
-        .map(|db| "Hello from Warp with PostgreSQL DB;");
-    Ok(route.boxed().into())
+    let hello_db = warp::any()
+        .and(warp::path::end())
+        .and(db_filter.clone())
+        .map(|_db| "Hello from Warp with PostgreSQL DB;");
+
+    let routes = hello_db.or(api_routes::<BoxedFilter<()>>(db_filter));
+
+    Ok(routes.boxed().into())
 }

@@ -1,6 +1,8 @@
 {
     "rust-analyzer.linkedProjects": [
         "./migration/Cargo.toml",
-        "./entity/Cargo.toml"
+        "./entity/Cargo.toml",
+        "./api/Cargo.toml",
+        "./model/Cargo.toml",
     ]
 }

@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [".", "entity", "migration"]
+members = [".", "api", "entity", "migration", "model"]
 
 [dependencies]
 anyhow = "1.0.80"
@@ -16,10 +16,12 @@ sea-orm = { version = "0.12.14", features = [
 ] }
 serde = "1.0.197"
 serde_json = "1.0.114"
-shuttle-runtime = "0.40.0"
-shuttle-shared-db = { version = "0.40.0", features = ["postgres"] }
-shuttle-warp = "0.40.0"
+shuttle-runtime = "0.41.0"
+shuttle-shared-db = { version = "0.41.0", features = ["postgres"] }
+shuttle-warp = "0.41.0"
 tokio = "1.26.0"
 warp = "0.3.3"
 entity = { path = "entity" }
 migration = { path = "migration" }
+api = { path = "api" }
+model = { path = "model" }
