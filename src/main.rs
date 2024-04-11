@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Error as anyError;
+use api::error::handle_rejection;
 use api::routes::api_routes;
 use migration::MigratorTrait;
 use sea_orm::ConnectOptions;
@@ -24,15 +25,14 @@ async fn warp(
         .await
         .map_err(|e| Error::Custom(anyError::msg(format!("Error running migrations: {e}"))))?;
 
-    let db_clone = Arc::new(db);
-    let db_filter = warp::any().map(move || Arc::clone(&db_clone)).boxed();
+    let db = Arc::new(db);
+    let db_filter = warp::any().map(move || Arc::clone(&db)).boxed();
 
-    let hello_db = warp::any()
+    let hello = warp::any()
         .and(warp::path::end())
-        .and(db_filter.clone())
-        .map(|_db| "Hello from Warp with PostgreSQL DB;");
+        .then(|| async { "Hello, Wold!" });
 
-    let routes = hello_db.or(api_routes(db_filter));
+    let routes = hello.or(api_routes(db_filter)).recover(handle_rejection);
 
     Ok(routes.boxed().into())
 }

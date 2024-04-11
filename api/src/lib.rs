@@ -1,17 +1,30 @@
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use warp::Filter;
+
+pub mod auth;
+pub mod error;
 pub mod routes;
 pub mod user;
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GenericResponse<T> {
+    message: String,
+    data: Option<T>,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+impl<T> GenericResponse<T> {
+    pub fn new(message: impl Into<String>, data: T) -> GenericResponse<T> {
+        GenericResponse {
+            message: message.into(),
+            data: Some(data),
+        }
     }
+}
+
+pub fn with_json<J>() -> impl Filter<Extract = (J,), Error = warp::Rejection> + Clone
+where
+    J: DeserializeOwned,
+    J: Send + Sync,
+{
+    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }

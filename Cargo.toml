@@ -16,12 +16,16 @@ sea-orm = { version = "0.12.14", features = [
 ] }
 serde = "1.0.197"
 serde_json = "1.0.114"
-shuttle-runtime = "0.41.0"
-shuttle-shared-db = { version = "0.41.0", features = ["postgres"] }
-shuttle-warp = "0.41.0"
+shuttle-runtime = "0.43.0"
+shuttle-shared-db = { version = "0.43.0", features = ["postgres"] }
+shuttle-warp = "0.43.0"
 tokio = "1.26.0"
-warp = "0.3.3"
+warp = "0.3.7"
 entity = { path = "entity" }
 migration = { path = "migration" }
 api = { path = "api" }
 model = { path = "model" }
+argon2 = "0.5.3"
+jsonwebtoken = "9.2.0"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
